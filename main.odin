@@ -132,7 +132,8 @@ run :: proc() -> bool {
 		image_data[pixel_addr + 1] = u8(pixel.g * 255)
 		image_data[pixel_addr + 2] = u8(pixel.b * 255)
 	    }
-
+	    rl.TraceLog(.INFO, "Reloaded shader")
+	    rl.UpdateTexture(texture, image.data)
 	}
 	if rl.IsKeyPressed(KEY_EXPORT) {
 	    cfilename := rl.TextFormat("%s", filename)
@@ -146,7 +147,6 @@ run :: proc() -> bool {
 	mouse = rl.GetScreenToWorld2D(mouse, camera)
 
 	camera_update(&camera)
-	rl.UpdateTexture(texture, image.data)
 	rl.BeginDrawing()
 	rl.ClearBackground(rl.RAYWHITE)
 	rl.BeginMode2D(camera)
