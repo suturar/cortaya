@@ -1,0 +1,1 @@
+Small program utility to cut pictures and modify them with an algorithm defined in shader.odin
