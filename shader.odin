@@ -1,16 +1,16 @@
 package cortaya
 import lin "core:math/linalg"
+import rl "vendor:raylib"
 import "core:math"
-Pixel :: [4]f32    
 
 @export
-shader :: proc(pixel: Pixel, pos: [2]f32) -> Pixel {
-    np : Pixel = pixel
+shader :: proc(pixel: rl.Color, pos: [2]f32) -> rl.Color {
+    np : rl.Color = pixel
 
-    hsl := lin.vector4_rgb_to_hsl(np)
-    hsl[2] = math.pow(hsl[2], 1.2)
-    
-    np = lin.vector4_hsl_to_rgb(hsl[0], hsl[1], hsl[2])
+    hsv := rl.ColorToHSV(np)
+    hsv[2] = math.pow(hsv[2], 1)
+    hsv[1] = math.pow(hsv[1], 0.5)
+    np = rl.ColorFromHSV(hsv.x, hsv.y, hsv.z)
     return np
 }
 

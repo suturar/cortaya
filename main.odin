@@ -10,8 +10,7 @@ import dl "core:dynlib"
 import "core:time"
 
 Image		:: rl.Image
-Pixel		:: [4]f32    
-Shader_Proc	:: proc(pixel: Pixel, pos: [2]f32) -> Pixel
+Shader_Proc	:: proc(pixel: rl.Color, pos: [2]f32) -> rl.Color
 Vec2		:: rl.Vector2
 
 KEY_CROP	:: rl.KeyboardKey.C
@@ -26,8 +25,8 @@ KEY_ZOOM_OUT	:: rl.KeyboardKey.DOWN
 State :: struct {
     shader_proc : Shader_Proc,
     shader_time : os.File_Time,
-    lib : dl.Library,
-    filename : string,
+    lib		: dl.Library,
+    filename	: string,
 }
 state : State
 
@@ -117,10 +116,10 @@ run :: proc() -> bool {
 	    for i := 0; i < int(image.width); i += 1 do for j := 0; j < int(image.height); j += 1 {
 		image_data := slice.from_ptr(cast([^]u8)image.data, image_size)
 		pixel_addr := (j * int(image.width) + i) * 3
-		pixel := Pixel{
-		    f32(image_data[pixel_addr])/255,
-		    f32(image_data[pixel_addr + 1])/255,
-		    f32(image_data[pixel_addr + 2])/255,
+		pixel := rl.Color{
+		    image_data[pixel_addr],
+		    image_data[pixel_addr + 1],
+		    image_data[pixel_addr + 2],
 		    1,
 		}
 		
@@ -128,9 +127,9 @@ run :: proc() -> bool {
 		pixel = shader_proc(pixel, {f32(i)/f32(image.width), f32(j)/f32(image.height)})
 		////////
 		
-		image_data[pixel_addr] = u8(pixel.r * 255)
-		image_data[pixel_addr + 1] = u8(pixel.g * 255)
-		image_data[pixel_addr + 2] = u8(pixel.b * 255)
+		image_data[pixel_addr] = pixel.r
+		image_data[pixel_addr + 1] = pixel.g
+		image_data[pixel_addr + 2] = pixel.b 
 	    }
 	    rl.TraceLog(.INFO, "Reloaded shader")
 	    rl.UpdateTexture(texture, image.data)
